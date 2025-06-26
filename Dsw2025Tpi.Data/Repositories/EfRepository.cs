@@ -28,9 +28,9 @@ public class EfRepository: IRepository
         return entity;
     }
 
-    public async Task<T?> First<T>(Expression<Func<T, bool>> predicate) where T : EntityBase
+    public async Task<T?> First<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase
     {
-        return await _context.Set<T>().FirstOrDefaultAsync(predicate);
+        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(predicate);
     }
 
     public async Task<IEnumerable<T>?> GetAll<T>(params string[] include) where T : EntityBase
@@ -68,10 +68,5 @@ public class EfRepository: IRepository
     public async Task<List<T>?> GetAll<T>() where T : EntityBase
     {
         return await _context.Set<T>().ToListAsync();
-    }
-
-    public Task<T?> First<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase
-    {
-        throw new NotImplementedException();
     }
 }

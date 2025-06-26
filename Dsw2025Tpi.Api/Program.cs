@@ -3,10 +3,7 @@ using Dsw2025Tpi.Data;
 using Dsw2025Tpi.Data.Repositories;
 using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Diagnostics.Metrics;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Dsw2025Tpi.Domain.Entities;
 
 public class Program
 {
@@ -18,6 +15,7 @@ public class Program
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddScoped<IProductsManagementService, ProductsManagementService>();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
         {
@@ -29,13 +27,11 @@ public class Program
         builder.Services.AddTransient<ProductsManagementService>();
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
         app.UseHttpsRedirection();
 
         app.UseAuthorization();

@@ -8,49 +8,70 @@ namespace Dsw2025Tpi.Api.Controllers
     [Route("api/products")]
     public class ProductsController : ControllerBase
     {
-        private readonly ProductsManagementService _service;
+        private IProductsManagementService _productsManagmentService;
 
-        public ProductsController(ProductsManagementService service)
+        public ProductsController(IProductsManagementService _ProductService)
         {
-            _service=service;
+            _productsManagmentService = _ProductService;
         }
-
-        [HttpGet()]
-        public async Task<IActionResult> GetProducts()
-        {
-            var products = await _service.GetProducts();
-            if (products == null || !products.Any()) return NoContent();
-            return Ok(products);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductBySku(Guid id)
-        {
-            var product = await _service.GetProductById(id);
-            if (product == null) return NotFound();
-            return Ok(product);
-        }
-
+        //Agregar un producto
         [HttpPost()]
-        public async Task<IActionResult> AddProduct([FromBody] ProductModel.Request request)
+        public async Task<IActionResult> AddProduct([FromBody] ProductModel.ProductRequest request)
         {
             try
             {
-                var product = await _service.AddProduct(request);
-                return Ok(product);
+                var product = await _productsManagmentService.AddProduct(request);
+                return StatusCode(201, product);
             }
-            catch (ArgumentException ae)
+            catch (ArgumentException)
             {
-                return BadRequest(ae.Message);
+                var validationErrors = new Dictionary<string, string[]>
+    {
+        { "Sku", new[] { "El campo SKU es obligatorio." } },
+        { "Name", new[] { "El nombre del producto es obligatorio." } },
+        { "CurrentUnitPrice", new[] { "El precio debe ser mayor a 0." } },
+        { "StockQuantity", new[] { "El stock no puede ser negativo." } }
+    };
+
+                return BadRequest(new
+                {
+                    title = "One or more validation errors occurred.",
+                    status = 400,
+                    errors = validationErrors
+                });
             }
+            //catch (ArgumentException ae)
+            //{
+            //    return BadRequest(ae.Message);
+            //}
             catch (ApplicationException de)
             {
                 return Conflict(de.Message);
             }
-            catch (Exception)
+            //catch (Exception)
+            //{
+            //    return Problem("Se produjo un error al guardar el producto");
+            //}
+            catch (Exception ex)
             {
-                return Problem("Se produjo un error al guardar el producto");
+                return StatusCode(500, new
+                {
+                    message = "Error inesperado al guardar el producto",
+                    detail = ex.Message,
+                    trace = ex.StackTrace
+                });
             }
         }
+        [HttpGet()]
+        public async Task<IActionResult> GetAll()
+        {
+            var products = await _productsManagmentService.GetProducts();
+
+            if (!products.Any())
+                return NoContent(); // 204
+
+            return Ok(products);  //200
+        }
+
     }
 }
