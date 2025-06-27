@@ -5,7 +5,7 @@
 namespace Dsw2025Tpi.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CorrectionProductModel_Quantity : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

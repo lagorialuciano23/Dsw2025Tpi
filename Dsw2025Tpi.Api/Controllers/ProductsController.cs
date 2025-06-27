@@ -62,15 +62,16 @@ namespace Dsw2025Tpi.Api.Controllers
                 });
             }
         }
+        //Obtener todos los productos
         [HttpGet()]
         public async Task<IActionResult> GetAll()
         {
             var products = await _productsManagmentService.GetProducts();
 
             if (!products.Any())
-                return NoContent(); // 204
+                return NoContent(); // Devuelve 204
 
-            return Ok(products);  //200
+            return Ok(products);  //Devuelve 200
         }
 
     }

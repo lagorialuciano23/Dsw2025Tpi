@@ -78,9 +78,19 @@ namespace Dsw2025Tpi.Application.Services
             );
         }
 
-        public Task<List<ProductModel.ProductResponseUpdate>?> GetProducts()
+        public async Task<List<ProductModel.ProductResponseUpdate>?> GetProducts()
         {
-            throw new NotImplementedException();
+            var products = await _repository.GetAll<Product>();
+            return products.Where(p => p.IsActive == true).Select(p => new ProductModel.ProductResponseUpdate(
+                p.Id,
+                p.Sku,
+                p.InternalCode,
+                p.Name,
+                p.Description,
+                p.CurrentUnitPrice,
+                p.StockQuantity,
+                p.IsActive
+            )).ToList();
         }
 
         public Task<ProductModel.ProductResponseUpdate> UpdateAsync(ProductModel.ProductRequest request, Guid id)
