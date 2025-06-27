@@ -1,12 +1,13 @@
-﻿using Dsw2025Tpi.Domain.Interfaces;
+﻿using Dsw2025Tpi.Application.Dtos;
+using Dsw2025Tpi.Data;
 using Dsw2025Tpi.Domain.Entities;
+using Dsw2025Tpi.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dsw2025Tpi.Application.Dtos;
-using Dsw2025Tpi.Data;
+using static Dsw2025Tpi.Application.Dtos.ProductModel;
 
 namespace Dsw2025Tpi.Application.Services
 {
@@ -15,21 +16,21 @@ namespace Dsw2025Tpi.Application.Services
         private readonly IRepository _repository;
         private readonly Dsw2025TpiContext _context;
 
-        public ProductsManagementService(Dsw2025TpiContext context,IRepository repository)
+        public ProductsManagementService(Dsw2025TpiContext context, IRepository repository)
         {
             _context = context;
             _repository = repository;
         }
 
-        
+
         //Add Product with validations
         public async Task<ProductModel.ProductResponse> AddProduct(ProductModel.ProductRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Sku) ||
                 string.IsNullOrWhiteSpace(request.InternalCode) ||
-                string.IsNullOrWhiteSpace(request.Description)||
+                string.IsNullOrWhiteSpace(request.Description) ||
                 string.IsNullOrWhiteSpace(request.Name) ||
-                request.CurrentUnitPrice < 0||
+                request.CurrentUnitPrice < 0 ||
                 request.StockQuantity < 0
                 )
             {
@@ -46,7 +47,7 @@ namespace Dsw2025Tpi.Application.Services
     request.CurrentUnitPrice,
     request.StockQuantity);
             await _repository.Add(product);
-            return new ProductModel.ProductResponse(product.Id,product.Sku, product.InternalCode, product.Name, product.Description, product.CurrentUnitPrice, product.StockQuantity);
+            return new ProductModel.ProductResponse(product.Id, product.Sku, product.InternalCode, product.Name, product.Description, product.CurrentUnitPrice, product.StockQuantity);
         }
 
         public async Task<bool> DisableProductAsync(Guid id)
@@ -93,9 +94,47 @@ namespace Dsw2025Tpi.Application.Services
             )).ToList();
         }
 
-        public Task<ProductModel.ProductResponseUpdate> UpdateAsync(ProductModel.ProductRequest request, Guid id)
+        public async Task<ProductModel.ProductResponseUpdate> UpdateAsync(ProductModel.ProductRequest request, Guid id)
         {
-            throw new NotImplementedException();
+            var product = await _repository.GetById<Product>(id);
+            if (product == null || !product.IsActive)
+                throw new KeyNotFoundException($"Producto con ID {id} no encontrado o está inhabilitado.");
+
+            if (string.IsNullOrWhiteSpace(request.Sku) ||
+                string.IsNullOrWhiteSpace(request.InternalCode) ||
+                string.IsNullOrWhiteSpace(request.Description) ||
+                string.IsNullOrWhiteSpace(request.Name) ||
+                request.CurrentUnitPrice <= 0 ||
+                request.StockQuantity < 0)
+            {
+                throw new ArgumentException("Valores para el producto no válidos.");
+            }
+
+            // Verifica la unicidad de Sku (si se modificó)
+            var existing = await _repository.First<Product>(p => p.Sku == request.Sku && p.Id != id);
+            if (existing != null)
+                throw new DuplicatedEntityException($"Ya existe otro producto con el SKU {request.Sku}");
+
+            // Actualiza campos
+            product.Sku = request.Sku;
+            product.InternalCode = request.InternalCode;
+            product.Name = request.Name;
+            product.Description = request.Description;
+            product.CurrentUnitPrice = request.CurrentUnitPrice;
+            product.StockQuantity = request.StockQuantity;
+
+            await _repository.Update(product);
+
+            return new ProductModel.ProductResponseUpdate(
+                product.Id,
+                product.Sku,
+                product.Name,
+                product.InternalCode,
+                product.Description,
+                product.CurrentUnitPrice,
+                product.StockQuantity,
+                product.IsActive
+            );
         }
     }
 }
