@@ -1,6 +1,13 @@
 # Trabajo Práctico Integrador
 ## Desarrollo de Software
 ### Backend
+INTEGRANTES
+
+57481 - Mercado Agostina - Agostina.Mercado@alu.frt.utn.edu.ar
+
+56838 - Lagoria Villagran Luciano Emanuel - Luciano.LagoriaVillagran@alu.frt.utn.edu.ar
+
+21204 - Karina Del Valle Miranda - Karina.Miranda@frt.utn.edu.ar
 
 ## Introducción
 Se desea desarrollar una plataforma de comercio electrónico (E-commerce). 
