@@ -9,30 +9,111 @@ INTEGRANTES
 
 21204 - Karina Del Valle Miranda - Karina.Miranda@frt.utn.edu.ar
 
-## Introducción
-Se desea desarrollar una plataforma de comercio electrónico (E-commerce). 
-En esta primera etapa el objetivo es construir el módulo de Órdenes, permitiendo la gestión completa de éstas.
+## INSTRUCCIONES PARA USO PERSONAL
+-Abrir la solución en Visual Studio
+-En la barra superior, hacé clic en Herramientas.
+-Luego seleccioná: Administrador de paquetes NuGet → Consola del Administrador de paquetes.
+-Se abrirá una ventana en la parte inferior del IDE donde migramos la base de datos
+-Ejecutamos el comando: Update-Database
+-La bdd ya esta funcionando, ya con las ultimas migraciones del modelo
 
-## Visión General del Producto
-Del relevamiento preliminar se identificaron los siguientes requisitos:
-- Los visitantes pueden consultar los productos sin necesidad de estar registrados o iniciar sesión.
-- Para realizar un pedido se requiere el inicio de sesión.
-- Una orden, para ser aceptada, debe incluir la información básica del cliente, envío y facturación.
-- Antes de registrar la orden se debe verificar la disponibilidad de stock (o existencias) de los productos.
-- Si la orden es exitosa hay que actualizar el stock de cada producto.
-- Se deben poder consultar órdenes individuales o listar varias con posibilidad de filtrado.
-- Será necesario el cambio de estado de una orden a medida que avanza en su ciclo de vida.
-- Los administradores solo pueden gestionar los productos (alta, modificación y baja) y actualizar el estado de la orden.
-- Los clientes pueden crear y consultar órdenes.
+## 🚀 Endpoints – Productos y Órdenes (1 al 6)
 
-[Documento completo](https://frtutneduar.sharepoint.com/:b:/s/DSW2025/ETueAd4rTe1Gilj_Yfi64RYB5oz9s2dOamxKSfMFPREbiA?e=azZcwg) 
+### 1. Crear un producto
+- **Método:** POST  
+- **Ruta:** `/api/products`  
+- **Descripción:** Crea un nuevo producto con campos obligatorios como SKU, nombre, descripción, precio y stock.
+- **Request Body ejemplo:**
+```json
+{
+  "sku": "ABC123",
+  "internalCode": "INT-001",
+  "name": "Teclado Gamer",
+  "description": "Teclado con retroiluminación y switches azules",
+  "currentUnitPrice": 24999.99,
+  "stockQuantity": 30
+}
+```
+Respuestas esperadas:
 
-## Alcance para el Primer Parcial
-> [!IMPORTANT]
-> Del apartado `IMPLEMENTACIÓN` (Pag. 7), completo hasta el punto `6` (inclusive)
+-201 Created: Producto creado correctamente.
 
+-400 Bad Request: Datos inválidos o SKU duplicado.
 
-### Características de la Solución
+### 2. Obtener todos los productos
+- **Método:** GET  
+- **Ruta:** `/api/products`  
+- **Descripción:** Devuelve todos los productos activos (IsActive = true).
+Respuestas esperadas:
 
-- Lenguaje: C# 12.0
-- Plataforma: .NET 8
+-200 OK: Lista de productos.
+
+-204 No Content: No hay productos activos.
+
+### 3. Obtener un producto por ID
+- **Método:** GET  
+- **Ruta:** `/api/products/{id}`  
+- **Descripción:** evuelve el producto que coincida con el ID provisto.
+Respuestas esperadas:
+
+-200 OK: Producto encontrado.
+
+-404 Not Found: Producto inexistente.
+
+### 4. Actualizar un producto
+- **Método:** PUT  
+- **Ruta:** `/api/products/{id}`  
+- **Descripción:** Actualiza todos los campos de un producto dado su ID.
+- **Request Body ejemplo:**
+```json
+{
+  "sku": "ABC123",
+  "internalCode": "INT-001",
+  "name": "Teclado Gamer RGB",
+  "description": "Nueva descripción actualizada",
+  "currentUnitPrice": 25999.99,
+  "stockQuantity": 40
+}
+```
+Respuestas esperadas:
+
+-200 OK: Producto actualizado.
+
+-400 Bad Request: Datos inválidos.
+
+-404 Not Found: Producto inexistente.
+
+### 5. Inhabilitar un producto
+- **Método:** PATCH  
+- **Ruta:** `/api/products/{id}`  
+- **Descripción:** Marca el producto como inactivo (IsActive = false) sin eliminarlo.
+Respuestas esperadas:
+-204 No Content: Producto inhabilitado.
+-404 Not Found: Producto no encontrado.
+
+### 6. Crear una Orden
+- **Método:** POST  
+- **Ruta:** `/api/orders`  
+- **Descripción:** Registra una nueva orden para un cliente. Valida que los productos existan, estén activos, coincidan en precio y tenga stock suficiente.
+- **Request Body ejemplo:**
+```json
+{
+  "customerId": "guid-del-cliente",
+  "shippingAddress": "Av. Mitre 123",
+  "billingAddress": "Av. Rivadavia 456",
+  "orderItems": [
+    {
+      "productId": "guid-del-producto",
+      "quantity": 2,
+      "currentUnitPrice": 15999.50,
+      "name": "Auriculares Bluetooth",
+      "description": "Auriculares inalámbricos con cancelación de ruido y hasta 20 horas de batería."
+    }
+  ]
+}
+```
+Respuestas esperadas:
+
+-201 Created: Orden creada exitosamente.
+
+-400 Bad Request: Cliente inválido, stock insuficiente o productos inconsistentes.
