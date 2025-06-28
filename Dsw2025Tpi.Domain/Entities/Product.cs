@@ -29,8 +29,13 @@ namespace Dsw2025Tpi.Domain.Entities
         public string Name { get; set; }
         public decimal CurrentUnitPrice { get; set; }
         public bool IsActive { get; set; }
-        //Falta implementar
-        //public ICollection<OrderItem> OrderItems { get; set; }
+
+        public ICollection<OrderItem> OrderItems { get; set; }
+        public int SubtractStock(int number)
+        {
+            StockQuantity= StockQuantity - number;
+            return StockQuantity;
+        }
     }
 }
 

@@ -1,13 +1,14 @@
+using Dsw2025Tpi.Api.SeedData;
 using Dsw2025Tpi.Application.Services;
 using Dsw2025Tpi.Data;
 using Dsw2025Tpi.Data.Repositories;
+using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Dsw2025Tpi.Domain.Entities;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ public class Program
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddScoped<IProductsManagementService, ProductsManagementService>();
+        builder.Services.AddScoped<IOrdersManagementService, OrdersManagment>();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
         {
@@ -26,7 +28,12 @@ public class Program
         builder.Services.AddScoped<IRepository, EfRepository>();
         builder.Services.AddTransient<ProductsManagementService>();
         var app = builder.Build();
-
+        //Charge Customers
+        using (var scope = app.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<Dsw2025TpiContext>();
+            await DbSeeder.SeedCustomersAsync(context);
+        }
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

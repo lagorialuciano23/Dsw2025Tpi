@@ -1,0 +1,62 @@
+[
+  {
+    "id": "f90e05e2-a3ab-4e4d-9cd4-9f07a267a001",
+    "email": "sofia.diaz@example.com",
+    "name": "Sofía Díaz",
+    "phoneNumber": "381-4567890"
+  },
+  {
+    "id": "b1a1a2a2-c2c2-4f4f-8f8f-0a0a0a0a0001",
+    "email": "martin.fernandez@example.com",
+    "name": "Martín Fernández",
+    "phoneNumber": "381-1234567"
+  },
+  {
+    "id": "5e5fa5a0-1d29-4e8c-9877-1c4ab0a1e907",
+    "email": "natalia.torres@example.com",
+    "name": "Natalia Torres",
+    "phoneNumber": "381-3216549"
+  },
+  {
+    "id": "714f8b71-7e45-463b-a6cb-cf115da7f341",
+    "email": "lucas.rodriguez@example.com",
+    "name": "Lucas Rodríguez",
+    "phoneNumber": "381-7777777"
+  },
+  {
+    "id": "a9343e7e-a44c-4344-98b9-9ac16d4053d0",
+    "email": "carla.garcia@example.com",
+    "name": "Carla García",
+    "phoneNumber": "381-6789123"
+  },
+  {
+    "id": "413f5e5e-5637-4448-86a5-402e993b6f79",
+    "email": "emiliano.ruiz@example.com",
+    "name": "Emiliano Ruiz",
+    "phoneNumber": "381-1002003"
+  },
+  {
+    "id": "ce954d89-5117-4b2f-bb34-02250145359f",
+    "email": "mariana.romero@example.com",
+    "name": "Mariana Romero",
+    "phoneNumber": "381-5432189"
+  },
+  {
+    "id": "ab789234-fdde-4a99-a89f-e33627b0456c",
+    "email": "ignacio.lopez@example.com",
+    "name": "Ignacio López",
+    "phoneNumber": "381-0009999"
+  },
+  {
+    "id": "eb219ea3-5d91-4c7f-b0a9-f01882adf785",
+    "email": "valentina.vera@example.com",
+    "name": "Valentina Vera",
+    "phoneNumber": "381-7654321"
+  },
+  {
+    "id": "3061e875-6ce5-46c2-bc71-8c3cbe145f00",
+    "email": "diego.molina@example.com",
+    "name": "Diego Molina",
+    "phoneNumber": "381-8642097"
+  }
+]
