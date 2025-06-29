@@ -98,16 +98,23 @@ Respuestas esperadas:
 - **Request Body ejemplo:**
 ```json
 {
-  "customerId": "guid-del-cliente",
-  "shippingAddress": "Av. Mitre 123",
-  "billingAddress": "Av. Rivadavia 456",
+  "shippingAddress": "123 Main St, Springfield",
+  "billingAddress": "123 Main St, Springfield",
+  "customerId": "", //Completar
   "orderItems": [
     {
-      "productId": "guid-del-producto",
+      "productId": "", //Completar
       "quantity": 2,
-      "currentUnitPrice": 15999.50,
-      "name": "Auriculares Bluetooth",
-      "description": "Auriculares inalámbricos con cancelación de ruido y hasta 20 horas de batería."
+      "name": "Wireless Mouse",
+      "description": "Ergonomic wireless mouse",
+      "unitPrice": 25.99
+    },
+    {
+      "productId": "", //Completar
+      "quantity": 1,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard",
+      "unitPrice": 79.50
     }
   ]
 }
