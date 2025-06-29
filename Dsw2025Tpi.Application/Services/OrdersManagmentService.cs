@@ -47,7 +47,7 @@ namespace Dsw2025Tpi.Application.Services
                 if (!product.IsActive)
                     throw new ArgumentException("Producto no disponible, campo IsActive = false.");
 
-                if (item.CurrentUnitPrice != product.CurrentUnitPrice)
+                if (item.UnitPrice != product.CurrentUnitPrice)
                     throw new ArgumentException("Precio de producto no coincidente.");
 
                 if (item.Description != product.Description || item.Name != product.Name)
@@ -59,7 +59,7 @@ namespace Dsw2025Tpi.Application.Services
                 if (item.Quantity <= 0)
                     throw new ArgumentException($"La cantidad del producto {product.Name} debe ser mayor a 0.");
 
-                if (item.CurrentUnitPrice <= 0)
+                if (item.UnitPrice <= 0)
                     throw new ArgumentException($"El precio del producto {product.Name} debe ser mayor a 0.");
 
                 //SI está bien, restamos stock y actualizamos
@@ -74,7 +74,7 @@ namespace Dsw2025Tpi.Application.Services
             foreach (var item in request.OrderItems)
             {
                 var product = await _repository.GetById<Product>(item.ProductId);
-                var orderItem = new OrderItem(product.Id, product, item.Quantity, item.CurrentUnitPrice);
+                var orderItem = new OrderItem(product.Id, product, item.Quantity, item.UnitPrice);
                 orderItems.Add(orderItem);
             }
             // Creamos la orden
