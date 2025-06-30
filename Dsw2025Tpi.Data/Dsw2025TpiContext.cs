@@ -68,6 +68,12 @@ public class Dsw2025TpiContext : DbContext
         //ORDER ITEM
         modelBuilder.Entity<OrderItem>(eb =>
         {
+            eb.Property(oi => oi.Name)
+              .HasMaxLength(100)
+              .IsRequired();
+            eb.Property(oi => oi.Description)
+              .HasMaxLength(300)
+              .IsRequired();
             eb.Property(oi => oi.UnitPrice)
              .HasPrecision(15, 2)
              .IsRequired();

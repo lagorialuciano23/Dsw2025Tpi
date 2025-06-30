@@ -39,5 +39,19 @@ namespace Dsw2025Tpi.Api.Controllers
                 return Problem(e.Message);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> GetOrders([FromQuery] OrderFilterRequest filter)
+        {
+            try
+            {
+                var result = await _orderManagmentService.GetAllAsync(filter);
+                return Ok(result); //200 OK con el array de órdenes
+            }
+            catch (Exception e)
+            {
+                return Problem($"Error inesperado: {e.Message}"); // 500 Internal Server Error
+            }
+        }
+
     }
 }

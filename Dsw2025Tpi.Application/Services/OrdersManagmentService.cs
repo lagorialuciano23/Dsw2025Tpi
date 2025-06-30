@@ -2,11 +2,13 @@
 using Dsw2025Tpi.Application.Exceptions;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Dsw2025Tpi.Application.Dtos.OrderModel;
 
 namespace Dsw2025Tpi.Application.Services
 {
@@ -17,6 +19,7 @@ namespace Dsw2025Tpi.Application.Services
         {
             _repository = repository;
         }
+        //ADD ORDER
         public async Task<OrderModel.OrderResponse> AddOrder(OrderModel.OrderRequest request)
         {
             //Ver si el cliente existe
@@ -70,11 +73,19 @@ namespace Dsw2025Tpi.Application.Services
             //Iniciar una orden de items
 
             var orderItems = new List<OrderItem>();
-            
+
             foreach (var item in request.OrderItems)
             {
                 var product = await _repository.GetById<Product>(item.ProductId);
-                var orderItem = new OrderItem(product.Id, product, item.Quantity, item.UnitPrice);
+                var orderItem = new OrderItem(
+                                product.Id,
+    product,
+    item.Quantity,
+    product.CurrentUnitPrice,
+    item.Name,
+    item.Description
+);
+
                 orderItems.Add(orderItem);
             }
             // Creamos la orden
@@ -84,7 +95,6 @@ namespace Dsw2025Tpi.Application.Services
             var added = await _repository.Add(order);
 
             return new OrderModel.OrderResponse(
-                added.Id,
                 added.CustomerId,
                 added.ShippingAddress,
                 added.BillingAddress,
@@ -92,13 +102,56 @@ namespace Dsw2025Tpi.Application.Services
                 added.TotalAmount,
                 added.OrderItems.Select(oi => new OrderModel.OrderItemResponse(
                     oi.ProductId,
-                    oi.Product?.Name ?? "",
-                    oi.Product?.Description ?? "",
-                    oi.UnitPrice,
                     oi.Quantity,
+                    oi.Name,
+                    oi.Description,
+                    oi.UnitPrice,
                     oi.Subtotal)).ToList(),
                 added.Status.ToString());
 
         }
+
+        //GET ORDERS
+        public async Task<List<OrderResponse>> GetAllAsync(OrderFilterRequest filter)
+        {
+            var query = _repository.Query<Order>()
+                .Include(o => o.OrderItems)
+                .Include(o => o.Customer)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter.Status) &&
+                Enum.TryParse<OrderStatus>(filter.Status, true, out var parsedStatus))
+            {
+                query = query.Where(o => o.Status == parsedStatus);
+            }
+
+            if (filter.CustomerId.HasValue)
+                query = query.Where(o => o.CustomerId == filter.CustomerId.Value);
+
+            var orders = await query
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
+
+            return orders.Select(o => new OrderResponse(
+    
+    o.CustomerId,
+    o.ShippingAddress,
+    o.BillingAddress,
+    o.CreatedAt,
+    o.TotalAmount,
+    o.OrderItems.Select(oi => new OrderItemResponse(
+        oi.ProductId,
+        oi.Quantity,
+        oi.Name,             
+        oi.Description,      
+        oi.UnitPrice,
+        
+        oi.Subtotal)).ToList(),
+    o.Status.ToString()
+)).ToList();
+        }
+
+
     }
 }

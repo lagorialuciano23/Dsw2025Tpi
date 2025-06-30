@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Dsw2025Tpi.Domain.Entities
 {
     public class OrderItem : EntityBase
     {
         public OrderItem() { }
-        public OrderItem(Guid productId, Product product, int quantity, decimal currentUnitPrice)
+        public OrderItem(Guid productId, Product product, int quantity, decimal currentUnitPrice, string name, string description)
         {
             ProductId = productId;
             Product = product;
             Quantity = quantity;
             UnitPrice = currentUnitPrice;
+            Name = name;
+            Description = description;
         }
 
         public Guid ProductId { get; set; }   //Foreign Key Order
@@ -22,6 +25,8 @@ namespace Dsw2025Tpi.Domain.Entities
 
         public Guid OrderId { get; set; }   //Foreign Key Order
         public Order? Order { get; set; }
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
 
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }

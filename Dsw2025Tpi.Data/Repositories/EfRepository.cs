@@ -69,4 +69,8 @@ public class EfRepository: IRepository
     {
         return await _context.Set<T>().ToListAsync();
     }
+    public IQueryable<T> Query<T>() where T : EntityBase
+    {
+        return _context.Set<T>();
+    }
 }
