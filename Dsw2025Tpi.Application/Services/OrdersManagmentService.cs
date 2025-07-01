@@ -143,10 +143,9 @@ namespace Dsw2025Tpi.Application.Services
     o.OrderItems.Select(oi => new OrderItemResponse(
         oi.ProductId,
         oi.Quantity,
-        oi.Name,             
-        oi.Description,      
+        oi.Name,
+        oi.Description,
         oi.UnitPrice,
-        
         oi.Subtotal)).ToList(),
     o.Status.ToString()
 )).ToList();

@@ -21,6 +21,6 @@ namespace Dsw2025Tpi.Application.Dtos
             decimal TotalAmount,
             List<OrderItemResponse> OrderItems,
             string Status);
-        public record OrderItemResponse(Guid ProductId, int Quantity, string Name, string Description, decimal currentUnitPrice,  decimal Subtotal);
+        public record OrderItemResponse(Guid ProductId, int Quantity, string Name, string Description, decimal unitPrice, decimal Subtotal);
     }
 }
