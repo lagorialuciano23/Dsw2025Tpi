@@ -57,8 +57,8 @@ namespace Dsw2025Tpi.Api.Controllers
                 return StatusCode(500, new
                 {
                     message = "Error inesperado al guardar el producto",
-                    detail = ex.Message,
-                    trace = ex.StackTrace
+                    //detail = ex.Message,
+                    //trace = ex.StackTrace
                 });
             }
         }
