@@ -12,6 +12,7 @@ namespace Dsw2025Tpi.Application.Services
     {
         Task<OrderModel.OrderResponse> AddOrder(OrderModel.OrderRequest request);
         Task<List<OrderResponse>> GetAllAsync(OrderFilterRequest filter);
+        Task<OrderResponse> GetByIdAsync(Guid id);
 
     }
 }

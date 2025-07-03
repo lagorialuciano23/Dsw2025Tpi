@@ -52,6 +52,23 @@ namespace Dsw2025Tpi.Api.Controllers
                 return Problem($"Error inesperado: {e.Message}"); // 500 Internal Server Error
             }
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById([FromRoute] Guid id)
+        {
+            try
+            {
+                var order = await _orderManagmentService.GetByIdAsync(id);
+                return Ok(order); // 200 OK con la orden completa
+            }
+            catch (EntityNotFoundException enf)
+            {
+                return NotFound(enf.Message);
+            }
+            catch (Exception e)
+            {
+                return Problem($"Error inesperado: {e.Message}");
+            }
+        }
 
     }
 }

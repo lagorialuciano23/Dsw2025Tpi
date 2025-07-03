@@ -79,12 +79,12 @@ namespace Dsw2025Tpi.Application.Services
                 var product = await _repository.GetById<Product>(item.ProductId);
                 var orderItem = new OrderItem(
                                 product.Id,
-    product,
-    item.Quantity,
-    product.CurrentUnitPrice,
-    item.Name,
-    item.Description
-);
+                                product,
+                                item.Quantity,
+                                product.CurrentUnitPrice,
+                                item.Name,
+                                item.Description
+                                 );
 
                 orderItems.Add(orderItem);
             }
@@ -151,6 +151,32 @@ namespace Dsw2025Tpi.Application.Services
 )).ToList();
         }
 
+        public async Task<OrderResponse> GetByIdAsync(Guid id)
+        {
+            var order = await _repository.Query<Order>()
+                .Include(o => o.OrderItems)
+                .Include(o => o.Customer)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+                throw new EntityNotFoundException($"Orden con ID {id} no encontrada.");
+
+            return new OrderResponse(
+                order.Id,
+                order.ShippingAddress,
+                order.BillingAddress,
+                order.CreatedAt,
+                order.TotalAmount,
+                order.OrderItems.Select(oi => new OrderItemResponse(
+        oi.ProductId,
+        oi.Quantity,
+        oi.Name,
+        oi.Description,
+        oi.UnitPrice,
+        oi.Subtotal)).ToList(),
+             order.Status.ToString()
+            );
+        }
 
     }
 }
