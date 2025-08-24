@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dsw2025Tpi.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace Dsw2025Tpi.Application.Dtos
 
         //RESPONSES
         public record OrderResponse(
+            Guid Id,
             Guid CustomerId,
             string ShippingAddress,
             string BillingAddress,
@@ -21,6 +23,7 @@ namespace Dsw2025Tpi.Application.Dtos
             decimal TotalAmount,
             List<OrderItemResponse> OrderItems,
             string Status);
-        public record OrderItemResponse(Guid ProductId, int Quantity, string Name, string Description, decimal unitPrice, decimal Subtotal);
+        public record OrderItemResponse(Guid Id, Guid ProductId, int Quantity, string Name, string Description, decimal UnitPrice, decimal Subtotal);
+        public record UpdateOrderStatusRequest(string Status);
     }
 }

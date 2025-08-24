@@ -46,6 +46,10 @@ namespace Dsw2025Tpi.Domain.Entities
 
         //Order Items
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public void UpdateStatus(OrderStatus newStatus)
+        {
+            Status = newStatus;
+        }
 
     }
 }

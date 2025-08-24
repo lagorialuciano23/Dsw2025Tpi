@@ -2,6 +2,7 @@
 using Dsw2025Tpi.Application.Exceptions;
 using Dsw2025Tpi.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using static Dsw2025Tpi.Application.Dtos.OrderModel;
 
 namespace Dsw2025Tpi.Api.Controllers
 {
@@ -67,6 +68,24 @@ namespace Dsw2025Tpi.Api.Controllers
             catch (Exception e)
             {
                 return Problem($"Error inesperado: {e.Message}");
+            }
+        }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus([FromRoute] Guid id, [FromBody] UpdateOrderStatusRequest request)
+        {
+            try
+            {
+                var updated = await _orderManagmentService.UpdateStatusAsync(id, request.Status);
+                return Ok(updated);
+            }
+            catch (EntityNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return BadRequest(e.Message);
             }
         }
 

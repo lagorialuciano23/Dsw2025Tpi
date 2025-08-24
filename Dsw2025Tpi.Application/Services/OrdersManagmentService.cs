@@ -95,19 +95,21 @@ namespace Dsw2025Tpi.Application.Services
             var added = await _repository.Add(order);
 
             return new OrderModel.OrderResponse(
+                order.Id,
                 added.CustomerId,
                 added.ShippingAddress,
                 added.BillingAddress,
                 added.CreatedAt,
                 added.TotalAmount,
                 added.OrderItems.Select(oi => new OrderModel.OrderItemResponse(
+                    oi.Id,
                     oi.ProductId,
                     oi.Quantity,
                     oi.Name,
                     oi.Description,
                     oi.UnitPrice,
                     oi.Subtotal)).ToList(),
-                added.Status.ToString());
+                    added.Status.ToString());
 
         }
 
@@ -134,21 +136,22 @@ namespace Dsw2025Tpi.Application.Services
                 .ToListAsync();
 
             return orders.Select(o => new OrderResponse(
-    
-    o.CustomerId,
-    o.ShippingAddress,
-    o.BillingAddress,
-    o.CreatedAt,
-    o.TotalAmount,
-    o.OrderItems.Select(oi => new OrderItemResponse(
-        oi.ProductId,
-        oi.Quantity,
-        oi.Name,
-        oi.Description,
-        oi.UnitPrice,
-        oi.Subtotal)).ToList(),
-    o.Status.ToString()
-)).ToList();
+                o.Id,
+                o.CustomerId,
+                o.ShippingAddress,
+                o.BillingAddress,
+                o.CreatedAt,
+                o.TotalAmount,
+                o.OrderItems.Select(oi => new OrderItemResponse(
+                    oi.Id,
+                    oi.ProductId,
+                    oi.Quantity,
+                    oi.Name,
+                    oi.Description,
+                    oi.UnitPrice,
+                    oi.Subtotal)).ToList(),
+                    o.Status.ToString()
+             )).ToList();
         }
 
         public async Task<OrderResponse> GetByIdAsync(Guid id)
@@ -163,20 +166,71 @@ namespace Dsw2025Tpi.Application.Services
 
             return new OrderResponse(
                 order.Id,
+                order.CustomerId,
                 order.ShippingAddress,
                 order.BillingAddress,
                 order.CreatedAt,
                 order.TotalAmount,
                 order.OrderItems.Select(oi => new OrderItemResponse(
-        oi.ProductId,
-        oi.Quantity,
-        oi.Name,
-        oi.Description,
-        oi.UnitPrice,
-        oi.Subtotal)).ToList(),
+                    oi.Id,
+                    oi.ProductId,
+                    oi.Quantity,
+                    oi.Name,
+                    oi.Description,
+                    oi.UnitPrice,
+                    oi.Subtotal)).ToList(),
              order.Status.ToString()
             );
         }
 
+        public async Task<OrderResponse> UpdateStatusAsync(Guid id, string newStatus)
+        {
+            var order = await _repository.GetById<Order>(id);
+            if (order == null)
+                throw new EntityNotFoundException($"Orden con ID {id} no encontrada.");
+
+            if (!Enum.TryParse<OrderStatus>(newStatus, true, out var parsedStatus))
+                throw new ArgumentException($"Estado '{newStatus}' no válido.");
+
+            if (order.Status == parsedStatus)
+                return new OrderResponse(
+                order.Id,
+                order.CustomerId,
+                order.ShippingAddress,
+                order.BillingAddress,
+                order.CreatedAt,
+                order.TotalAmount,
+                order.OrderItems.Select(oi => new OrderItemResponse(
+                    oi.Id,
+                    oi.ProductId,
+                    oi.Quantity,
+                    oi.Name,
+                    oi.Description,
+                    oi.UnitPrice,
+                    oi.Subtotal)).ToList(),
+                    order.Status.ToString()
+            );
+
+            order.UpdateStatus(parsedStatus);
+            await _repository.Update(order);
+
+            return new OrderResponse(
+                order.Id,
+                order.CustomerId,
+                order.ShippingAddress,
+                order.BillingAddress,
+                order.CreatedAt,
+                order.TotalAmount,
+                order.OrderItems.Select(oi => new OrderItemResponse(
+                    oi.Id,
+                    oi.ProductId,
+                    oi.Quantity,
+                    oi.Name,
+                    oi.Description,
+                    oi.UnitPrice,
+                    oi.Subtotal)).ToList(),
+             order.Status.ToString()
+            );
+        }
     }
 }

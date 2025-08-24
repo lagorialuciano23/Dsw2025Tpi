@@ -12,6 +12,7 @@ namespace Dsw2025Tpi.Domain.Entities
         public OrderItem() { }
         public OrderItem(Guid productId, Product product, int quantity, decimal currentUnitPrice, string name, string description)
         {
+            Id = Guid.NewGuid();
             ProductId = productId;
             Product = product;
             Quantity = quantity;
