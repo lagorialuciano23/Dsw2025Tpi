@@ -1,10 +1,12 @@
 ﻿using Dsw2025Tpi.Application.Dtos;
 using Dsw2025Tpi.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dsw2025Tpi.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/products")]
     public class ProductsController : ControllerBase
     {
@@ -64,6 +66,7 @@ namespace Dsw2025Tpi.Api.Controllers
         }
         //Obtener todos los productos
         [HttpGet()]
+        [Authorize(Roles ="tester")]
         public async Task<IActionResult> GetAll()
         {
             var products = await _productsManagmentService.GetProducts();

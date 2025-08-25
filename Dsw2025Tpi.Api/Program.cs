@@ -4,7 +4,11 @@ using Dsw2025Tpi.Data;
 using Dsw2025Tpi.Data.Repositories;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 public class Program
 {
@@ -23,10 +27,63 @@ public class Program
         {
             options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Dsw2025Db;Integrated Security=True;");
         });
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(o =>
+        {
+            o.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Desarrollo de Software",
+                Version = "v1",
+            });
+            o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Name = "Authorization",
+                Description = "Ingresar el token",
+                Type = SecuritySchemeType.ApiKey
+            });
+            o.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+        });
         builder.Services.AddHealthChecks();
+
+        var jwtConfig = builder.Configuration.GetSection("Jwt");
+        var keyText = jwtConfig["Key"] ?? throw new ArgumentNullException("JWT Key");
+        var key = Encoding.UTF8.GetBytes(keyText);
+        
+        builder.Services.AddAuthentication(options=>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }
+        )
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtConfig["Issuer"],
+                    ValidAudience = jwtConfig["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
         builder.Services.AddScoped<IRepository, EfRepository>();
         builder.Services.AddTransient<ProductsManagementService>();
+        builder.Services.AddSingleton<JwtTokenService>();
         var app = builder.Build();
         //Charge Customers
         using (var scope = app.Services.CreateScope())

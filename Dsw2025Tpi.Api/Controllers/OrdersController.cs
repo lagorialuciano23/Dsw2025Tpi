@@ -1,6 +1,7 @@
 ﻿using Dsw2025Tpi.Application.Dtos;
 using Dsw2025Tpi.Application.Exceptions;
 using Dsw2025Tpi.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Dsw2025Tpi.Application.Dtos.OrderModel;
 
