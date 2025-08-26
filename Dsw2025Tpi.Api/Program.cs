@@ -92,6 +92,15 @@ public class Program
         builder.Services.AddScoped<IRepository, EfRepository>();
         builder.Services.AddTransient<ProductsManagementService>();
         builder.Services.AddSingleton<JwtTokenService>();
+        builder.Services.AddAuthorization();
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("PermitirFrontend", policy =>
+                policy.WithOrigins("http://localhost:3000")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod());
+        });
 
         builder.Services.AddDbContext<AuthenticateContext>(options =>
         {
@@ -111,6 +120,8 @@ public class Program
             app.UseSwaggerUI();
         }
         app.UseHttpsRedirection();
+
+        app.UseCors("PermitirFrontend");
 
         app.UseAuthentication();
 
