@@ -42,31 +42,24 @@ namespace Dsw2025Tpi.Api.Controllers
                     errors = validationErrors
                 });
             }
-            //catch (ArgumentException ae)
-            //{
-            //    return BadRequest(ae.Message);
-            //}
+            
             catch (ApplicationException de)
             {
                 return Conflict(de.Message);
             }
-            //catch (Exception)
-            //{
-            //    return Problem("Se produjo un error al guardar el producto");
-            //}
+            
             catch (Exception ex)
             {
                 return StatusCode(500, new
                 {
                     message = "Error inesperado al guardar el producto",
-                    //detail = ex.Message,
-                    //trace = ex.StackTrace
+                    
                 });
             }
         }
         //Obtener todos los productos
         [HttpGet()]
-        [Authorize(Roles ="tester")]
+        //[Authorize(Roles ="tester")]
         public async Task<IActionResult> GetAll()
         {
             var products = await _productsManagmentService.GetProducts();
